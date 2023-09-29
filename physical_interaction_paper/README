@@ -1,0 +1,19 @@
+run_domain.R - Rscript that runs through the entire domain interaction pipeline
+
+domains/ - folder containing the sequence alignments for each protein domain 
+
+343yeast_master.tre - master tree used to generate gene trees
+
+domain_trees.tre - trees generated for each protein domain
+
+complex_association.tsv - text file with each of the domains (col1) and the complex it belongs to (col2)
+
+true_positives.tsv - list of physically interacting domain pairs
+
+ERC/ - folder containing the scripts necessary to run ERC
+
+ERC/run_ERC.R  - User input to run ERC
+
+all_complexes - excel spreadsheet with each complex on a different tab. Contains the ERC edgelists for
+
+the whole complex and the Mann-Whitney U tests
