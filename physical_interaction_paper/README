@@ -14,6 +14,4 @@ ERC/ - folder containing the scripts necessary to run ERC
 
 ERC/run_ERC.R  - User input to run ERC
 
-all_complexes - excel spreadsheet with each complex on a different tab. Contains the ERC edgelists for
-
-the whole complex and the Mann-Whitney U tests
+all_complexes - excel spreadsheet with each complex on a different tab. Contains the ERC edgelists for the whole complex and the Mann-Whitney U tests
