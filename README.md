@@ -2,10 +2,10 @@
 This software is for determining Evolutionary Rate Covariation (ERC) between sets of genes, using R.
 
 ## Input:
-To run it, you will need a tree of genes you want to examine
+To run it, you will need a set of gene trees you want to examine
 
 ## Output:
-The code will output a correlation residual matrix and a matrix with branch values. The residual matrix has numbers representing ERC correlations. A positive value indicates that the genes are above the expected variation, while a negative value represents that they are below the expected variation. A zero means that the genes have the expected evolutionary relationship.
+The code will output a correlation matrix and a matrix with branch values. The correlation matrix has numbers representing ERC correlations. A positive value indicates that the genes have some evolutionary covariation. The expectation is that gene pairs will have zero correlation, indicating no evolutionary rate covariation.
 
 
 ## Installation:
