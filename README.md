@@ -23,7 +23,7 @@ Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[[
 ## Quickstart Guide
 0. Install dependencies ([visit install page](https://github.com/nclark-lab/erc/blob/main/install.md))
 1. Download package (either download from github or use git clone)
-2. Download [yeast tree example](https://github.com/nclark-lab/erc/blob/main/physical_interaction_paper/343yeast_master.tre)
+2. Download [yeast tree example](https://github.com/nclark-lab/erc/blob/main/physical_interaction_paper/domains_trees.tre)
 3. Set output file name on line 20 of RunERC.R
 4. Uncomment line 3, then run the program
    -  You may need to be explicit about source file paths if the code gives you an error.
