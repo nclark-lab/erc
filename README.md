@@ -2,7 +2,7 @@
 This software is for determining Evolutionary Rate Covariation (ERC) between sets of genes, using R.
 
 ## Input:
-You will need a .tre file containing Newick format trees of the genes you want to examine. Optionally, you can provide a master tree, but if you do not have one the program will make one for you.
+You will need a .tre file containing Newick format trees of the genes you want to examine. Optionally, you can provide a master tree, but if you do not have one the program will make one.
 
 ## Output:
 The code will output a correlation residual matrix and a matrix with branch values. The residual matrix has numbers representing ERC correlations. A positive value indicates that the genes are above the expected variation, while a negative value represents that they are below the expected variation. A zero means that the genes have the expected evolutionary relationship.
