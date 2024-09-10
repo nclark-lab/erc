@@ -30,8 +30,8 @@
    ```
 4. Install impute
    -   In R, run:
-      -   `install.packages("BiocManager")`
-      -   `BiocManager::install("impute")`
+     -   `install.packages("BiocManager")`
+     -   `BiocManager::install("impute")`
 
 4. Install from Github
    ```
