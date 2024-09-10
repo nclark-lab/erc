@@ -31,6 +31,7 @@ Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[[
 6. Manipulate corres matrices (exapmles coming soon.)
 
 For example:
+
 `corres[["cor"]][0:10,0:10]` shows the first 10x10 of the correlation matrix.
 
 `corres[["cor"]][300:310,300:310]` shows elements 300-310 of the axes of the correlation matrix.
