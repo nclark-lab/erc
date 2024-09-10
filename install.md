@@ -3,7 +3,6 @@
 # Ubuntu 14.04 (64 bit), Ubuntu 16.04 (64 bit)
 1. Install R
    - add the following line to `/etc/apt/source.list`.
-   (For Ubuntu 24)
      - `deb https://cran.rstudio.com/bin/linux/ubuntu trusty/`
    - `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9`
    ```
@@ -29,9 +28,9 @@
    phangorn
    ```
 4. Install impute
-   -   In R, run:
-     -   `install.packages("BiocManager")`
-     -   `BiocManager::install("impute")`
+   - In R, run the following.
+     - `install.packages("BiocManager")`
+     - `BiocManager::install("impute")`
 
 4. Install from Github
    ```
