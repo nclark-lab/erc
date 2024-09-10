@@ -29,9 +29,9 @@
    phangorn
    ```
 4. Install impute
-In R, run:
-   -   `install.packages("BiocManager")`
-   -   `BiocManager::install("impute")`
+   -   In R, run:
+      -   `install.packages("BiocManager")`
+      -   `BiocManager::install("impute")`
 
 4. Install from Github
    ```
