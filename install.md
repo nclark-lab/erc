@@ -10,10 +10,10 @@ Here we provide instructions for installation on various systems.
    sudo apt-get update
    sudo apt-get install r-base
    ```
-2. Install dependcies for `devtools`
+2. Install dependencies for `devtools`
    - `sudo apt-get install libssl-dev`
    - `sudo apt-get install libcurl4-openssl-dev`
-3. Install R package dependcies
+3. Install R package dependencies
    ```
    devtools
    RColorBrewer
