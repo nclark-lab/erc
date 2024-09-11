@@ -10,10 +10,10 @@ Here we provide instructions for installation on various systems.
    sudo apt-get update
    sudo apt-get install r-base
    ```
-2. Install dependencies for `devtools`
+2. Install dependcies for `devtools`
    - `sudo apt-get install libssl-dev`
    - `sudo apt-get install libcurl4-openssl-dev`
-3. Install R package dependencies
+3. Install R package dependcies
    ```
    devtools
    RColorBrewer
@@ -36,10 +36,9 @@ Here we provide instructions for installation on various systems.
      - `install.packages("BiocManager")`
      - `BiocManager::install("impute")`
 
-5. Install from Github
+5. Run this command in the terminal to copy the Github repository to your computer.
    ```
-   library(devtools)
-   install_github("nclark-lab/erc")
+   git clone https://github.com/nclark-lab/erc
    ```
 
 ## Win 7 (64 bit), Win 10 (64 bit)
@@ -77,3 +76,38 @@ Here we provide instructions for installation on various systems.
   library(devtools)
   install_github("nclark-lab/erc")
   ```
+
+## Mac
+For compatibility reasons the Mac installation involves some extra dependencies, so be careful to include them all. Also ensure your R is up to date (>4.4.0).
+
+1. Make sure your R version is at least the version under which the binary was compiled. If not, install the latest version of R
+   - `https://cran.r-project.org/bin/macosx/`
+
+2. Install the dependent packages as follows:
+      ```
+   devtools
+   RColorBrewer
+   gplots
+   phytools
+   ├──ape
+   ├──maps
+   ├──Rcpp
+   doParallel
+   rsvd
+   progress
+   geiger
+   knitr
+   RcppArmadillo
+   weights
+   phangorn
+   ```
+   These packages are unnique to mac:
+   ```
+   gfortran
+   xcodecli
+   ```
+   - If you have a problem with these, try visiting this site for help:
+   - `https://github.com/coatless-mac/macrtools`
+
+3. In the console, navigate to your target folder, and run the following to copy the erc repository to your computer:
+   - `git clone https://github.com/nclark-lab/erc`
