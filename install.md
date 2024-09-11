@@ -75,5 +75,5 @@ Here we provide instructions for installation on various systems.
 5. Install from Github
   ```
   library(devtools)
-  install_github("nclark-lab/RERconverge")
+  install_github("nclark-lab/erc")
   ```
