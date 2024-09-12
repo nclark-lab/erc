@@ -102,12 +102,8 @@ For compatibility reasons the Mac installation involves some extra dependencies,
    weights
    phangorn
    ```
-   These packages are unnique to mac:
-   ```
-   gfortran
-   xcodecli
-   ```
-   - If you have a problem with these, try visiting this site for help:
+  
+   - If you have a problem with installing Rcpp packages these, try visiting this site for help:
    - `https://github.com/coatless-mac/macrtools`
 
 3. In the console, navigate to your target folder, and run the following to copy the erc repository to your computer:
