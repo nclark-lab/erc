@@ -14,8 +14,7 @@ Check our [installation](https://github.com/nclark-lab/erc/blob/main/install.md)
 ## Use Instructions:
 **The script you should open and use is** `RunERC.R`. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
 
-First, change the file names in the file about the . This may include the other R files in this package, such as `Updates2022.R`. Make sure you set a valid output file name as well. Finally, you're ready to run the code!
-
+First, set the tree and output file names, on lines 11 and 12. You may also need to add the full path to the other R files in this package, such as `Updates2022.R` (further up in the code). Finally, you're ready to run the code!
 
 At the end of execution, you will have a data object called "corres" which will also be saved as your output .RDS file.
 Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[["count"]]`` represents the number of observations/branches that went into each correlation.
