@@ -12,7 +12,7 @@ Check our [installation](https://github.com/nclark-lab/erc/blob/main/install.md)
 
 
 ## Use Instructions:
-**The script you should open and use is** `RunERC.R`. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
+**The script you should open and use is __RunERC.R__**. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
 
 First, set the tree and output file names, on lines 11 and 12. You may also need to add the full path to the other R files in this package, such as `Updates2022.R` (further up in the code). Finally, you're ready to run the code!
 
@@ -24,7 +24,7 @@ Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[[
 0. Install dependencies ([visit install page](https://github.com/nclark-lab/erc/blob/main/install.md))
 1. Download package (either download from github or use git clone)
 2. Download [yeast tree example](https://github.com/nclark-lab/erc/blob/main/physical_interaction_paper/domains_trees.tre)
-3. Set output file name on line 20 of RunERC.R
+3. Set file names on lines 11-12 of **RunERC.R**
 4. Uncomment line 3, then run the program
    -  You may need to be explicit about source file paths if the code gives you an error.
 5. Comment line 3 until you next boot up R
