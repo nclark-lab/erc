@@ -1,19 +1,20 @@
 # ERC (Evolutionary Rate Covariation)
-This software is for determining Evolutionary Rate Covariation (ERC) between sets of genes, using R.
+This software is for determining Evolutionary Rate Covariation (ERC) between pairs of genes, using R.
 
 ## Input:
-You will need a .tre file containing Newick format trees of the genes you want to examine. Optionally, you can provide a master tree, but if you do not have one the program will make one.
+You will need a `.tre` file containing Newick format trees of the genes you want to examine. Part of the workflow is to create a master tree of all the species and their corresponding branch lengths. In light of this, optionally, you can provide a master tree, but if you do not have one the program will make one from the list of trees you provide in your `.tre` file.
 
 ## Output:
-The code will output a correlation residual matrix and a matrix with branch values. The residual matrix has numbers representing ERC correlations. A positive value indicates that the genes are above the expected variation, while a negative value represents that they are below the expected variation. A zero means that the genes have the expected evolutionary relationship.
-
+The code will output a correlation residual matrix and a matrix with branch values. The residual matrix has numbers representing ERC correlations; The higher the value is, the more correlated the gene pair's relative evolutionary rates are.
 
 ## Installation:
 Check our [installation](https://github.com/nclark-lab/erc/blob/main/install.md) page for more details.
 
 
 ## Use Instructions:
-First, change the file paths to match your folders. This may include the other R files in this package, such as Updates2022.R. Make sure you set a valid output file name as well. Finally, you're ready to run the code!
+**The script you should open and use is** `RunERC.R`. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
+
+First, change the file names in the file about the . This may include the other R files in this package, such as `Updates2022.R`. Make sure you set a valid output file name as well. Finally, you're ready to run the code!
 
 
 At the end of execution, you will have a data object called "corres" which will also be saved as your output .RDS file.
