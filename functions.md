@@ -1,3 +1,4 @@
+
 # Function Overview (mk. I)
 On this page we will summarize the parameters, inputs, and outputs of the main functions involved in calculating evolutionary rate covariation.
 - Input parameters will be in **bold** (`with defaults in parentheses`) and required parameters will be <ins>**underlined.**</ins>
@@ -39,7 +40,7 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 - **scale** (`F`): unused (?)
 - **doOnly** (`NULL`): do only n trees
 - **maxT** (`NULL`): Maximum number of trees to use (will default to however many there are in treesObj)
-- **block<span>.d</span>o** (`F`): ???
+- **block<span>.d</span>o** (`F`): gets the unique patterns of species presence/absence from the report object
 - **weights** (`NULL`): Weights for the paths. If not provided it grabs them from treesObj
 - **do.loess** (`F`): toggle for using loess regression. At present unused, but if you know what you're doing you can remove the code preventing its use.
 - **family** (`"gaussian"`): Used for the loess regression
@@ -79,7 +80,7 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 ## runERC
 
 ### Input
-- <ins>**rr**</ins>:
+- <ins>**rr**</ins>: residuals matrix of relative evolutionary rates
 - <ins>**treesObj**</ins>: Input the trees you want to find ERC for
 - **minSp** (`NULL`): minimum species in a tree/cluster
 - **doOnly** (`NULL`): list of genes to restrict output to
