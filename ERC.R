@@ -1,25 +1,32 @@
 library(doParallel)
+
+getClusterList=function(treesObj){
+  pStr=apply(treesObj$report, 1, paste, collapse="")
+  uClust=unique(pStr)
+  char1=iconv("1", toRaw=T)[[1]]
+  charL=(lapply(uClust, function(x){iconv(x, toRaw=T)[[1]]}))
+  count1=unlist(lapply(charL, function(x){sum(x==char1)}))
+  oo=order(-count1)
+  uClust=uClust[oo]
+  count1=count1[oo]
+  nclust=length(uClust)
+  idList=list()
+  for(i in 1:nclust){
+    idList[[i]]=which(pStr==uClust[i])
+  }
+
+  return(list(idList=idList, count1=count1))
+}
+
+
 computeERC=function(rr, treesObj, minSp=NULL, doOnly=NULL, againstAll=F, parallel=F, clusterListOutput=NULL, saveFile=NULL, plot = F, win_value = 3){
   
   reportBin=treesObj$report[, TipLabels(treesObj$masterTree)]
   if(is.null(clusterListOutput)){
-    pStr=apply(treesObj$report, 1, paste, collapse="")
-    uClust=unique(pStr)
-    char1=iconv("1", toRaw=T)[[1]]
-    charL=(lapply(uClust, function(x){iconv(x, toRaw=T)[[1]]}))
-    count1=unlist(lapply(charL, function(x){sum(x==char1)}))
-    oo=order(-count1)
-    uClust=uClust[oo]
-    count1=count1[oo]
-    idList=list()
-    for(i in 1:nclust){
-      idList[[i]]=which(pStr==uClust[i])
-    }
+    clusterListOutput = getClusterList(treesObj)
   }
-  else{
-    count1=clusterListOutput$count1
-    idList=clusterListOutput$idList
-  }
+  count1=clusterListOutput$count1
+  idList=clusterListOutput$idList
   
   
   #set min species
@@ -223,23 +230,7 @@ if(!is.null(saveFile)){
 return(result)
 }
 
-getClusterList=function(treesObj){
-  pStr=apply(treesObj$report, 1, paste, collapse="")
-  uClust=unique(pStr)
-  char1=iconv("1", toRaw=T)[[1]]
-  charL=(lapply(uClust, function(x){iconv(x, toRaw=T)[[1]]}))
-  count1=unlist(lapply(charL, function(x){sum(x==char1)}))
-  oo=order(-count1)
-  uClust=uClust[oo]
-  count1=count1[oo]
-  nclust=length(uClust)
-  idList=list()
-  for(i in 1:nclust){
-    idList[[i]]=which(pStr==uClust[i])
-  }
-  
-  return(list(idList=idList, count1=count1))
-}
+
 
 findYeastGenes=function(inGenes){
   names(which(unlist(lapply(og2geneList, function(x){length(intersect(x, inGenes))>0}))))
