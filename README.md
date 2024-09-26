@@ -30,10 +30,15 @@ Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[[
 4. Uncomment line 3, then run the program
    -  You may need to be explicit about source file paths if the code gives you an error.
 5. Comment line 3 until you next boot up R
-6. Manipulate corres matrices (exapmles coming soon.)
+6. Manipulate corres matrices
+
+
+
 
 For example:
 
 `corres[["cor"]][0:10,0:10]` shows the first 10x10 of the correlation matrix.
 
 `corres[["cor"]][300:310,300:310]` shows elements 300-310 of the axes of the correlation matrix.
+
+![elements 300-310 of correlation matrix](corres_300_310.png)
