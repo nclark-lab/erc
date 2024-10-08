@@ -138,8 +138,7 @@ allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL){
 }
 
 readTrees=function(file, max.read=NA, masterTree=NULL){
-  #REMOVE
-  print("Updated function")
+
   tmp=scan(file, sep="\t", what="character")
   trees=vector(mode = "list", length = min(length(tmp)/2,max.read, na.rm = T))
   treenames=character()
@@ -193,21 +192,13 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
   }
   master=Preorder(master)
   treesObj$masterTree=master
-  
-  
-  
-  
-  
-  
-  
-  
+
   
   for ( i in 1:treesObj$numTrees){
     treesObj$trees[[i]]=RenumberTips(treesObj$trees[[i]], master$tip.label)
     treesObj$trees[[i]]=Preorder(treesObj$trees[[i]])
     
   }
-  
   
   
   ap=allPaths(master)
@@ -239,7 +230,20 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
   treesObj$lengths=unlist(lapply(treesObj$trees, function(x){sqrt(sum(x$edge.length^2))}))
   
   ii=which(rowSums(report)==maxsp)
-
+  ##JL added this if statement 7/19/23 to fix a problem with calculating masterTree edges when a master tree is supplied
+  ##if(sum(treesObj$masterTree$edge.length) == nrow(treesObj$masterTree$edge)){
+  ##  if(length(ii)>20){
+  ##    message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
+  ##    tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
+  ##    allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
+  ##    allEdge=scaleMat(allEdge)
+  ##    allEdgeM=apply(allEdge,2,mean)
+  ##    treesObj$masterTree$edge.length=allEdgeM
+  ##  }
+  ##  else{
+  ##    message("Not enough genes with all species present: master tree has no edge.lengths")
+  ##  }
+  ##}
   if(length(ii)>20){
     message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
     tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
@@ -302,7 +306,7 @@ transformMat=function(tree){
 
 
 
-
+# internal
 getAncestors=function(tree, nodeN){
   if(is.character(nodeN)){
     nodeN=which(tree$tip.label==nodeN)
@@ -326,7 +330,7 @@ getLogPaths=function(treesObj){
   log(treesObj$paths+mval)
 }
 
-
+#various transformation functions, using log or arc hyperbolic sine or square root
 transformData=function(x, transform=c("log", "asinh")){
   if(transform=="log"){
     if(length(x)>10000){
@@ -390,7 +394,7 @@ getTrimmedAverage=function(x, trim=0.05){
   apply(x,2, mean, trim=trim, na.rm=T)
 }
 
-getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20, scale=F,  doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
+getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=1, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
   
   
   
@@ -401,7 +405,7 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
   
   if(is.null(treesObj$pathsImputed) && n.pcs>0){
     message("PC normalization not supported without imputation\n
-            Run transformPaths with imptation or set n.pcs=0")
+            Run transformPaths with imputation or set n.pcs=0")
     return()
   }
   if(block.do){
@@ -409,18 +413,20 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
     uClust=unique(pStr)
     blockId=match(pStr, uClust)
   }
-  
+
   tPaths= treesObj$paths
   if(is.null(nvMod)){
     if(n.pcs>0){
+      # dimensionality reduction
       svdres=rsvd(treesObj$pathsImputed, k=n.pcs+1)
+
       if(!interaction){
         nvMod=model.matrix(~1+svdres$v[, 1:n.pcs])
       }
       else{
         nvMod=model.matrix(~1+.^2, data = as.data.frame(svdres$v[, 1:n.pcs]))
       }
-      
+
     }
     else {
       nvAve=apply(tPaths,2, mean, trim=0.05, na.rm=T)
@@ -497,7 +503,7 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
         
         next
       }
-      
+
       
       #find all the genes that that whose maximal species set is the same as tree1
       
@@ -509,24 +515,15 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
       else{
         iido=i
       }
-      
-      
-      
-      
-      
-      
-      
+
       ee=edgeIndexRelativeMaster(tree1, treesObj$masterTree)
       
       #these are the indecies for the paths that span the tree 
       #these are used to build the regression
       
       iiPaths= treesObj$matIndex[ee[, c(2,1)]]
-      
-      
-      
-      
-      
+
+
       #extract the tPaths and corresponding weights
       
       allbranch=tPaths[iido,iiPaths,drop=F]
@@ -551,12 +548,11 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
       
       
       
-      
       for(j in 1:length(iido)){
         
         modelIndexList[[iido[j]]]=iiPaths[which(!is.na(allbranch[j,]))]
       }
-      
+
       
       if(!do.loess){
         
@@ -571,6 +567,7 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
           preds[iido[id],iiallnotna]=predict(lres, nvMod[iiallnotna,-1])
         }
       }
+      #plotting function. change to T for plotting functionality
       if(F){
         plot(preds[iido[1],], tPaths[iido[1],])
         
@@ -589,7 +586,11 @@ getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=N
 }
 
 
-
+#' Provides names for paths/RERs representing terminal branches for plotting
+#' Originally an internal function but necessary for the vignette/walk-through
+#' @param  masterTree The master tree used for analysis
+#' @return  Names corresponding to the paths/RERs for terminal branches
+#' @export
 namePathsWSpecies=function(masterTree){
   mat=transformMat(masterTree)
   n=length(masterTree$tip.label)
@@ -598,7 +599,7 @@ namePathsWSpecies=function(masterTree){
   #each column in the mat is composed of at most one tip edge
   tip.edge=apply(mat[iim,],2,function(x){if(max(x)>0){which(x==1)} else{NA}})
   return(masterTree$tip[tip.edge])
-  
+
 }
 
 
@@ -621,7 +622,7 @@ getRMat=function(resOut, all=F, weights=NULL, scale=F, use.rows=NULL){
   
   allres=copyMat(resOut$allresiduals)
   if(is.null(use.rows)){
-    use.rows=1:nrow(allres)  
+    use.rows=1:nrow(allres)
   }
   resIn=resOut$allresiduals
   if(!is.null(weights)){
