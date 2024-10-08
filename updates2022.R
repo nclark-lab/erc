@@ -230,20 +230,7 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
   treesObj$lengths=unlist(lapply(treesObj$trees, function(x){sqrt(sum(x$edge.length^2))}))
   
   ii=which(rowSums(report)==maxsp)
-  ##JL added this if statement 7/19/23 to fix a problem with calculating masterTree edges when a master tree is supplied
-  ##if(sum(treesObj$masterTree$edge.length) == nrow(treesObj$masterTree$edge)){
-  ##  if(length(ii)>20){
-  ##    message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
-  ##    tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
-  ##    allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
-  ##    allEdge=scaleMat(allEdge)
-  ##    allEdgeM=apply(allEdge,2,mean)
-  ##    treesObj$masterTree$edge.length=allEdgeM
-  ##  }
-  ##  else{
-  ##    message("Not enough genes with all species present: master tree has no edge.lengths")
-  ##  }
-  ##}
+
   if(length(ii)>20){
     message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
     tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
