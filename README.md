@@ -21,7 +21,7 @@ Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[[
 
 
 ## Quickstart Guide
-0. Install dependencies ([visit instal page](https://github.com/nclark-lab/erc/blob/main/install.md))
+0. Install dependencies ([visit install page](https://github.com/nclark-lab/erc/blob/main/install.md))
 1. Download package (either download from github or use git clone)
 2. Open **runERC.R**. This is the file that executes the pipeline code.
 3. Set output file name on line 20 of RunERC.R
