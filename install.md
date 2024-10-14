@@ -3,6 +3,7 @@ Here we provide instructions for installation on various systems.
 
 ## Ubuntu 14.04 (64 bit), Ubuntu 16.04 (64 bit)
 1. **Install R**
+
    Add the following line to `/etc/apt/source.list`.
      - `deb https://cran.rstudio.com/bin/linux/ubuntu trusty/`
 
