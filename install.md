@@ -43,9 +43,9 @@ Here we provide instructions for installation on various systems.
    ```
 5. **Install impute**
 
-   - In R, run the following.
-     - `install.packages("BiocManager")`
-     - `BiocManager::install("impute")`
+   In R, run the following.
+   - `install.packages("BiocManager")`
+   - `BiocManager::install("impute")`
 
 6. **Github Installation**
 
@@ -88,9 +88,9 @@ Here we provide instructions for installation on various systems.
 
 5. **Install impute**
 
-   - In R, run the following.
-     - `install.packages("BiocManager")`
-     - `BiocManager::install("impute")`
+   In R, run the following.
+   - `install.packages("BiocManager")`
+   - `BiocManager::install("impute")`
 
 6. **Github Installation**
 
@@ -141,9 +141,9 @@ For compatibility reasons the Mac installation involves some extra dependencies,
 
 4. **Install impute**
 
-   - In R, run the following.
-     - `install.packages("BiocManager")`
-     - `BiocManager::install("impute")`
+   In R, run the following.
+   - `install.packages("BiocManager")`
+   - `BiocManager::install("impute")`
 
 5. **Github Installation**
 
