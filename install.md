@@ -5,8 +5,8 @@ Here we provide instructions for installation on various systems.
 1. **Install R**
    Add the following line to `/etc/apt/source.list`.
      - `deb https://cran.rstudio.com/bin/linux/ubuntu trusty/`
-   Run the following code in the console
 
+   Run the following code in the console
    - `sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9`
    - `sudo apt-get update`
    - `sudo apt-get install r-base`
