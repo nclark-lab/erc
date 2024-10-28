@@ -1,5 +1,5 @@
 ##supplementary ERC functions
-##updated JHL 10/10/24
+##updated GH 10/28/24
 
 
 ##make sure the gene list is contained in the erc matrix
@@ -20,15 +20,12 @@ pair_list <- function(list, erc_matrix , na.val = -2) {
 }
 ##Make the ERC matrix symmetrical
 make_symmetric = function(erc_matrix){
-  for(gene in rownames(erc_matrix)){
-    #print(gene)
-    to_fix = which(is.na(erc_matrix[,gene]))
-    temp = which(!is.na(erc_matrix[gene,to_fix]))
-    if(length(temp) ==0){
-      next
-    }
-    erc_matrix[names(temp),gene] = erc_matrix[gene,names(temp)]
-  }
+  size = dim(erc_matrix)[1]
+  hold = matrix(NA,size,size)
+  nindex = is.na(erc_matrix)   # find NA indices, make them zero
+  hold[nindex] <- 0
+  hold <- hold + t(erc_matrix) # add transpose to zeroes
+  erc_matrix[nindex] <- hold[nindex] # combine matrices
   erc_matrix
 }
 
