@@ -6,7 +6,7 @@ library(rsvd)
 library(impute)
 library(pheatmap)
 library(Rcpp)
-#sourceCpp("cppFuncs.cpp")
+#sourceCpp("cppFuncs.cpp"
 computeWeights=function(treesObj, plot=T){
   if(min(treesObj$paths, na.rm = T)<1e-6){
     offset=1e-6
@@ -381,7 +381,7 @@ getTrimmedAverage=function(x, trim=0.05){
   apply(x,2, mean, trim=trim, na.rm=T)
 }
 
-getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=1, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
+getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
   
   
   
