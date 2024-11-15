@@ -64,3 +64,37 @@ betweencomplex <- function(list1 , list2 , erc_matrix) {
   mat <- erc_matrix[list1,list2]
   mat
 }
+
+##get mean ERC b/w 2 gene lists and perform permutation tests
+#	pval1 is pval after permuting genes in list 1.  Similar for pval2.
+#	In practice, take the mean or max of pval1,pval2. It's up to the user to decide which.
+permTestPair <- function(list1, list2, erc_matrix, perms=10000) {
+  cleannames <- clean_list(colnames(erc_matrix),colnames(erc_matrix))
+  list1 <- clean_list(list1, cleannames)
+  list2 <- clean_list(list2, cleannames)
+  if(length(list1) == 1 | length(list2) == 1){return(NaN)}
+  mat <- erc_matrix[list1,list2]
+  obs <- mean(mat[upper.tri(mat)] , na.rm=TRUE)
+  print(obs)
+  if (is.nan(obs)) { return(NaN) }
+  
+  null1 <- c()
+  null2 <- c()
+  while (length(null1) < perms) {
+    s1 <- sample(cleannames , length(list1))
+    s2 <- sample(cleannames , length(list2))
+
+	mat1 <- erc_matrix[s1,list2]
+	mat2 <- erc_matrix[list1,s2]
+    m1 <- mean(mat1[upper.tri(mat1)] , na.rm=TRUE)
+    m2 <- mean(mat2[upper.tri(mat2)] , na.rm=TRUE)
+
+    if (is.nan(m1) | is.nan(m2)) next
+    null1 <- c(null1 , m1)
+    null2 <- c(null2 , m2)
+  }
+  pval1 <- sum(as.numeric(obs <= null1)) / perms
+  pval2 <- sum(as.numeric(obs <= null2)) / perms
+  list( obs=obs , p=c(pval1,pval2) , null=c(null1,null2))
+}
+
