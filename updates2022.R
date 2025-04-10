@@ -116,7 +116,7 @@ edgeIndexRelativeMaster=function(tree, masterTree){
   newedge
 }
 
-allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL){
+allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL,i=NULL){
   if(! is.list(masterTreePaths)){
     masterTreePaths=allPaths(masterTree)
   }
@@ -133,6 +133,10 @@ allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL){
   ii=masterTreePaths$matIndex[cbind(treePaths$nodeId[,1],treePaths$nodeId[,2])]
   vals=double(length(masterTreePaths$dist))
   vals[]=NA
+  if(sum(is.na(ii))>0 & !is.null(i)) {
+    message("warning: discordant tree topology in tree ", i,", returning NA row", sep="")
+    return(vals)
+  }
   vals[ii]=treePaths$dist
   vals
 }
@@ -219,7 +223,7 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
   
   for( i in 1:treesObj$numTrees){
     pb$tick()
-    paths[i,]=allPathsMasterRelative(treesObj$trees[[i]], master, ap)
+    paths[i,]=allPathsMasterRelative(treesObj$trees[[i]], master, ap,i)
   }
   
   
