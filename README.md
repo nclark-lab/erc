@@ -38,7 +38,7 @@ Supplementary analysis functions to evaluate your ERC matrices are found in the 
 3. Set input and output file names on lines 11-12 of **runERC.R**
 4. Run the program
    -  You may need to be explicit about source file paths if the code gives you an error.
-   -  If using Rstudio, go to **Session>Set Working Directory>To Source File Location** to set the file location to runERC.R's containingfolder
+   -  If using Rstudio, go to **Session>Set Working Directory>To Source File Location** to set the file location to runERC.R's containing folder
 5. Manipulate corres matrices
 
 
