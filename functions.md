@@ -39,7 +39,6 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 - **useSpecies** (`NULL`): list of species to focus on
 - **min.sp** (`10`): minimum number of species that must be present in a gene pair.
 - **min.valid** (`20`): decides what the minimum score is for a branch to be valid
-    - what is the score? not understanding the iigood/iibad/allbranch setup
 - **doOnly** (`NULL`): do only n trees
 - **maxT** (`NULL`): Maximum number of trees to use (will default to however many there are in treesObj)
 - **block<span>.d</span>o** (`F`): gets the unique patterns of species presence/absence from the report object
