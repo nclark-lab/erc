@@ -64,7 +64,7 @@ Below inputs are currently unused, but have been left in the event of edge case 
 
 ### Input
 - <ins>**resOut**</ins>: input of residual values: the output from `getAllResiduals`.
-- **all** (`F`): toggle for using all rows of residual input. (Seems redundant with use.rows?)
+- **all** (`F`): toggle for using all rows of residual input.
 - **weights** (`NULL`): weights for residuals
 - **scale** (`F`): toggle to T to normalize the residuals (divide by the mean and divide by SD)
 - **use.rows** (`NULL`): list of which rows to use. Will default to using all of them.
