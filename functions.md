@@ -54,7 +54,7 @@ Below inputs are currently unused, but have been left in the event of edge case 
 ### Output
 `getAllResiduals` returns a list with four elements:
 - **allresiduals**: residual values
-- **index**: ?????
+- **index**: indices used for the regression
 - **preds**: predicted branch values via regression
 - **tpaths**: transformed paths
 
@@ -73,6 +73,7 @@ Below inputs are currently unused, but have been left in the event of edge case 
 - residual matrix
 
 <br>
+
 ## getClusterList
 `getClusterList` takes a treesObj object and returns a list of gene clusters
 
