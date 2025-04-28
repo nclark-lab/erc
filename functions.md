@@ -10,8 +10,9 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 `readTrees` takes a `.tre` input file in newick format, and creates a master tree with branch lengths according to the supplied input trees.
 ### Input
 - <ins>**file**</ins>: the file you want to open
-- max.read: (`NULL`) maximum number of trees to read. It is useful for limiting the running time of the program for large tree files
-- masterTree: (`NULL`) optional input of all species present in the trees file
+- **max.read** (`NULL`): maximum number of trees to read. It is useful for limiting the running time of the program for large tree files
+- **masterTree** (`NULL`): optional input of all species present in the trees file
+- **useSpecies** (`NULL`): species to filter trees by; the species you want to read in
 ### Output
 - treesObj object that contains all trees inputted, their branch lengths, and a master tree
 
