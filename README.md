@@ -13,7 +13,7 @@ Check our [installation](https://github.com/nclark-lab/erc/blob/main/install.md)
 
 
 ## Use Instructions:
-**The script you should open and use is __RunERC.R__**. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
+**The script you should open and use is __runERC.R__**. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
 
 For an overview of what these functions input, output, and do, please visit our [functions](https://github.com/nclark-lab/erc/blob/main/functions.md) page.
 
@@ -33,14 +33,13 @@ Supplementary analysis functions to evaluate your ERC matrices are found in the 
 
 ## Quickstart Guide
 0. Install dependencies ([visit install page](https://github.com/nclark-lab/erc/blob/main/install.md))
-1. Download package (either download from github or use git clone)
-2. Open **RunERC.R**. This is the file that you will need to execute the pipeline.
-3. Set input and output file names on lines 11-12 of **RunERC.R**
-4. Uncomment line 3, then run the program
+1. Download package (either download from github or use `git clone`)
+2. Open **runERC.R**. This is the file that you will need to execute the pipeline.
+3. Set input and output file names on lines 11-12 of **runERC.R**
+4. Run the program
    -  You may need to be explicit about source file paths if the code gives you an error.
-   -  If using Rstudio, go to **Session>Set Working Directory>To Source File Location** to set up file imports
-5. Comment line 3 until you next boot up R
-6. Manipulate corres matrices
+   -  If using Rstudio, go to **Session>Set Working Directory>To Source File Location** to set the file location to runERC.R's containingfolder
+5. Manipulate corres matrices
 
 
 
