@@ -171,7 +171,6 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
   }
   trees = trees[keeptrees]
   treenames = treenames[keeptrees]
-  print("TREES READ SUCCESSFULLY!")
   names(trees)=treenames
   treesObj=vector(mode = "list")
   treesObj$trees=trees
