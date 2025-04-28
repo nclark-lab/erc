@@ -97,7 +97,7 @@ Below inputs are currently unused, but have been left in the event of edge case 
 - **clusterListOutput** (`NULL`): input for a list of clustered trees (the output from `getClusterList`). If this is not provided it will run `getClusterList` on its own.
 - **saveFile** (`NULL`): Filename to save to. If left null(the default) it will not save a file.
 - **plot** (`F`): Toggle for displaying a plot. If you toggle this to true, try to use doOnly to select only a few genes since this takes up a lot of space.
-- **win_value** (`3`):
+- **win_value** (`3`): Number of values to winsorize/number of outliers to bring in. If set to 3, it takes the 3 most extreme values and sets them to the fourth most extreme value (on either end).
 
 ### Output
 `runERC` outputs a list of two matrices:
