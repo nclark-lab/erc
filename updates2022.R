@@ -6,7 +6,7 @@ library(rsvd)
 library(impute)
 library(pheatmap)
 library(Rcpp)
-#sourceCpp("cppFuncs.cpp"
+#sourceCpp("cppFuncs.cpp")
 computeWeights=function(treesObj, plot=T){
   if(min(treesObj$paths, na.rm = T)<1e-6){
     offset=1e-6
@@ -134,17 +134,18 @@ allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL,i=NULL){
   vals=double(length(masterTreePaths$dist))
   vals[]=NA
   if(sum(is.na(ii))>0 & !is.null(i)) {
-    message("warning: discordant tree topology in tree ", i,", returning NA row", sep="")
+    message("warning: discordant tree topology in tree ", i,", returning NA row",sep="")
     return(vals)
   }
   vals[ii]=treePaths$dist
   vals
 }
 
-readTrees=function(file, max.read=NA, masterTree=NULL){
-
+readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
+  
   tmp=scan(file, sep="\t", what="character")
   trees=vector(mode = "list", length = min(length(tmp)/2,max.read, na.rm = T))
+  keeptrees=rep(TRUE,length(trees))
   treenames=character()
   maxsp=0; # maximum number of species
   
@@ -154,14 +155,23 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
     }
     else{
       trees[[i/2]]=unroot(read.tree(text=tmp[i]))
-      #check if it has more species
+      if (i == 2){ allnames=intersect(trees[[i/2]]$tip.label,useSpecies) }
+      
+      if(!is.null(useSpecies)){
+        if(length(intersect(trees[[i/2]]$tip.label,useSpecies)) < 3){
+          keeptrees[[i/2]] = FALSE; next;
+        }
+        trees[[i/2]] = unroot(keep.tip(trees[[i/2]],intersect(trees[[i/2]]$tip.label,useSpecies)))
+      }
       if(length(trees[[i/2]]$tip.label)>maxsp){
-        maxsp=length(trees[[i/2]]$tip.label)
-        allnames=trees[[i/2]]$tip.label
+        allnames = unique(c(allnames,trees[[i/2]]$tip.label))
+        maxsp = length(allnames)
       }
     }
-    
   }
+  trees = trees[keeptrees]
+  treenames = treenames[keeptrees]
+  print("TREES READ SUCCESSFULLY!")
   names(trees)=treenames
   treesObj=vector(mode = "list")
   treesObj$trees=trees
@@ -234,7 +244,20 @@ readTrees=function(file, max.read=NA, masterTree=NULL){
   treesObj$lengths=unlist(lapply(treesObj$trees, function(x){sqrt(sum(x$edge.length^2))}))
   
   ii=which(rowSums(report)==maxsp)
-
+  ##JL added this if statement 7/19/23 to fix a problem with calculating masterTree edges when a master tree is supplied
+  ##if(sum(treesObj$masterTree$edge.length) == nrow(treesObj$masterTree$edge)){
+  ##  if(length(ii)>20){
+  ##    message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
+  ##    tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
+  ##    allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
+  ##    allEdge=scaleMat(allEdge)
+  ##    allEdgeM=apply(allEdge,2,mean)
+  ##    treesObj$masterTree$edge.length=allEdgeM
+  ##  }
+  ##  else{
+  ##    message("Not enough genes with all species present: master tree has no edge.lengths")
+  ##  }
+  ##}
   if(length(ii)>20){
     message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
     tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
