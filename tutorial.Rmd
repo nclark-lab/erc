@@ -1,0 +1,133 @@
+---
+title: "ERC Analysis Walkthrough"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    css: custom.css
+    toc: yes
+authors: Jordan Little, Guillermo Hoffmann Meyer
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE) 
+```
+\newpage
+## Installing and loading ERC
+
+Make sure to visit the [**installation page**](https://github.com/nclark-lab/erc/blob/main/install.md) to get the code and prerequisite packages before following this tutorial.
+
+# ERC Pipeline Walkthrough
+You can follow along in R or RStudio, or you can read along in **runERC.R**. First, if you are using RStudio, you need to set your directory. Change the string in `setwd` to the directory your runERC.R file is in, generally the repository you cloned/downloaded.
+
+```{r}
+setwd("~/Documents/GitHub/erc")
+```
+
+Once you set your directory, you can source the relevant packages and ERC files.
+
+```{r results='hide', message = FALSE, warning = FALSE, cache = TRUE}
+require(devtools)
+remotes::install_github("ms609/TreeTools")
+source("ERC_functions.R")
+source("ERC.R") 
+Rcpp::sourceCpp("cppFuncs.cpp")
+```
+
+## File setup
+
+To run the workflow, you need to delineate two things: the tree file to read in, and your output file. Find the path for the tree file, and choose a name (and optionally a path) for your output file. Here we set `treefile` and `outputfile` accordingly.
+
+```{r, cache = TRUE}
+treefile = "physical_interaction_paper/domains_trees.tre"
+outputfile = "out.RDS"
+
+```
+
+## Workflow
+
+Now that you've selected your file names, you can begin running the main functions. For a detailed description of what they do and their parameters, visit the [functions page](https://github.com/nclark-lab/erc/blob/main/functions.md). Here, your tree file is read in with `readTrees`, and the trees are transformed (via a square root transform) with `transformPaths`. 
+
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+comptrees = readTrees(treefile)
+
+comptrees = transformPaths(comptrees, transform = "sqrt",impute = F)
+```
+Above is a plot of the tree paths before and after a square root transform.
+
+Next, with `getAllResiduals`, Relative Evolutionary Rates (RERs) are calculated, and then those rates are formatted into a matrix with `getRMat`
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+compResid = getAllResiduals(comptrees, n.pcs = 0)
+
+rMat = getRMat(compResid, all = T, weights = comptrees$weights)
+```
+
+Finally, we get a list of gene clusters for the ERC function.
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+clusterList = getClusterList(comptrees)
+```
+
+## ERC function
+
+Finally, you can compute the ERC values for your trees. You can tune many parameters (also visible on the [**functions page**](https://github.com/nclark-lab/erc/blob/main/functions.md)), but the main ones you want to worry about are below:
+- Here is where you will edit the threshold you want, `minSp` is the number of species two genes have to share
+- If you only want to run a few genes you can set the parameter `doOnly = c("genea","geneb")`
+- If you want the plot of the RERs set `plot = T` (I would only recommend doing this for a few genes because it uses up a lot of space)
+```{r}
+corres=computeERC(rMat, comptrees, clusterListOutput = clusterList,
+                  minSp = 15, saveFile = outputfile)
+```
+
+## Fisher transformation
+
+After you create your ERC matrices, we recommend Fisher transforming them. This creates a single matrix taking into account the two matrices of the `corres` object: the correlation matrix and the matrix of observation/branch counts for each correlation. We also make it symmetrical here, but if your matrix is too large you may just want to make subsets symmetrical as you need them.
+
+```{r}
+ft_data = fisherTransform(corres)
+
+#makes the matrix symmetrical
+sym_ft = make_symmetric(ft_data)
+```
+
+Congratulations for making it to the end! Now with `ft_data` you have the data we usually operate on. Below we have some sample analysis you can do with it.
+
+
+# Next Steps:
+
+## Example: examine 10 genes' relations to each other
+
+In this example, we show how to visualize ERC data. We take a sample ten genes, and create a symmetrical ERC matrix of their values (we round the values at the end to make display clearer).
+
+```{r}
+genes = c("NSE5_1", "NSE6_3",  "CSE1_3",  "CSE1_1",  "EXO70_1",
+          "MCM2_4",  "MDY2_1",  "ATP1_2",  "MCM5_1",  "SEC8_2")
+# You could also generate a random sample:
+# genes = colnames(ft_data)[sample(1:length(ft_data), 10, replace=FALSE)]
+
+
+# makes a matrix of the 10 genes against themselves 
+# (it can be against different genes too)
+ft_filtered = betweencomplex(genes,genes,sym_ft)
+
+ft_filtered = round(ft_filtered,3)
+#output
+ft_filtered
+
+
+```
+
+## Another example: non-Fisher transformed data
+
+We can also use our raw ERC correlation data from before the Fisher transformation. Again, we round to simplify the display.
+
+```{r}
+
+
+filtered = betweencomplex(genes,genes,corres[["cor"]])
+
+sym = round(make_symmetric(filtered),3)
+
+#output
+sym
+```

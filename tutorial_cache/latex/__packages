@@ -1,0 +1,14 @@
+usethis
+devtools
+ape
+TreeTools
+phangorn
+progress
+RcppArmadillo
+rsvd
+impute
+pheatmap
+Rcpp
+foreach
+iterators
+doParallel

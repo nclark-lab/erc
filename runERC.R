@@ -2,7 +2,7 @@ require(devtools)
 #install TreeTools
 remotes::install_github("ms609/TreeTools")
 #this takes a few seconds and only needs to be done once per session
-source("updates2022.R")
+source("ERC_functions.R")
 source("ERC.R")
 Rcpp::sourceCpp("cppFuncs.cpp")
 
@@ -30,3 +30,7 @@ clusterList=getClusterList(comptrees)
 ##If you want the plot of the RERs set plot = T (I would only recommend doing this for a few genes because it uses up a lot of space)
 
 corres=computeERC(rMat, comptrees, parallel = F, clusterListOutput = clusterList,  minSp = 15, saveFile = outputfile)
+
+
+# We strongly recommend you Fisher transform the data; this is what we usually operate on.
+ft_data = fisherTransform(corres)

@@ -13,17 +13,21 @@ Check our [installation](https://github.com/nclark-lab/erc/blob/main/install.md)
 
 
 ## Use Instructions:
+
+Here we provide a simple explanation of how to use ERC, but you can also check out our [step-by-step tutorial](https://cdn.jsdelivr.net/gh/nclark-lab/erc@master/tutorial.pdf) .
+
 **The script you should open and use is __runERC.R__**. This contains the workflow, which is comprised of several data-processing (and time-consuming) subfunctions.
 
-For an overview of what these functions input, output, and do, please visit our [functions](https://github.com/nclark-lab/erc/blob/main/functions.md) page.
+For an overview of what these functions input, output, and do, please visit our [functions page](https://github.com/nclark-lab/erc/blob/main/functions.md).
 
-First, set the tree and output file names, on lines 11 and 12. You may also need to add the full path to the other R files in this package, such as `Updates2022.R` (further up in the code). Finally, you're ready to run the code!
+First, set the tree and output file names, on lines 11 and 12. You may also need to add the full path to the other R files in this package, such as `ERC_functions.R` (further up in the code). Finally, you're ready to run the code!
 
-At the end of execution, you will have a data object called "corres" which will also be saved as your output .RDS file.
-Use ``corres[["cor"]]`` to see and operate on the correlation matrix. ``corres[["count"]]`` represents the number of observations/branches that went into each correlation. To further examine the output, use the following analysis functions.
+At the end of execution, you will have a data object called "corres" which will also be saved as your output .RDS file. Use `corres[["cor"]]` to see and operate on the correlation matrix. `corres[["count"]]` represents the number of observations/branches that went into each correlation. To further examine the output, use the following analysis functions.
+
+You will also have `ft_data`, the Fisher transformed matrix of data. This is what we recommend operating on.
 
 ## Analysis functions
-Supplementary analysis functions to evaluate your ERC matrices are found in the `ERC_supp.R` file. Here is what they do:
+Analysis functions to evaluate your ERC matrices are found at the end of the `ERC_functions.R` file. Here is what they do:
 - `clean_list(list, names)`: makes sure that every item in `list` is found in `names`
 - `pair_list(list, erc_matrix, na.val = -2)`: creates vector list of gene x gene ERC values, with no repeats or self x self entries. Optional NA replacement value
 - `make_symmetric(erc_matrix)`: makes input ERC matrix symmetrical.
@@ -47,19 +51,18 @@ Supplementary analysis functions to evaluate your ERC matrices are found in the 
 ## Sample analysis
 
 ```R
-#select random 10 genes, for demonstration
-genes = colnames(corres[["cor"]])[sample(1:220, 10, replace=FALSE)]
+# 10 sample genes
+genes = c("NSE5_1", "NSE6_3",  "CSE1_3",  "CSE1_1",  "EXO70_1",
+          "MCM2_4",  "MDY2_1",  "ATP1_2",  "MCM5_1",  "SEC8_2")
+# You could also generate a random sample with:
+# genes = colnames(ft_data)[sample(1:length(ft_data), 10, replace=FALSE)]
 
-# You could also type them into a list manually:
-# genes = c("NSE5_1", "NSE6_3",  "CSE1_3",  "CSE1_1",  "EXO70_1", "MCM2_4",  "MDY2_1",  "ATP1_2",  "MCM5_1",  "SEC8_2")
 
-#select a matrix of the 10 genes against themselves
-filtered = betweencomplex(genes,genes,corres[["cor"]])
-
-#make it symmetrical
-sym = make_symmetric(filtered)
+# makes a matrix of the 10 genes against themselves
+# (it can be against different genes too)
+ft_filtered = betweencomplex(genes,genes,sym_ft)
 
 #output
-sym
+ft_filtered
 ```
 ![symmetrized matrix output example](matrix_example.png)
