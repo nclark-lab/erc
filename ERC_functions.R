@@ -407,7 +407,7 @@ getTrimmedAverage=function(x, trim=0.05){
   apply(x,2, mean, trim=trim, na.rm=T)
 }
 
-getAllResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
+coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
   
   
   
@@ -659,6 +659,33 @@ getRMat=function(resOut, all=F, weights=NULL, scale=F, use.rows=NULL){
   
   
   allres
+}
+
+
+getAllResiduals=function(treesObj, transform="sqrt", impute=T,  # transformPaths arguments
+                         #--------------------------------------------------------#
+                         doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F
+                         nvMod=NULL, n.pcs=0, cutoff=NULL,      #
+                         useSpecies=NULL,  min.sp=10,           #
+                         min.valid=20, doOnly=NULL, maxT=NULL,  # getAllResiduals core function arguments
+                         block.do=F, weights=NULL,              #
+                         do.loess=F, family="gaussian",         #
+                         span=0.7, interaction=F,               #
+                         #--------------------------------------------------------#
+                         all=F, weights=NULL, scale=F, use.rows=NULL)   # getRMat arguments
+{  
+  
+  
+  tree2 = transformPaths(treesObj, transform = transform, impute = impute)
+  
+  resids = coreGetResiduals(tree2, nvMod=nvMod, n.pcs=n.pcs, cutoff=cutoff,
+                    useSpecies=useSpecies, min.sp=min.sp, min.valid=min.valid,
+                    doOnly=doOnly,maxT=maxT, block.do=block.do, weights=weights,
+                    do.loess=do.loess, family=family, span=0.7, interaction=interaction)
+  
+  r = getRMat(resids, all=all,weights=NULL, scale=F,use.rows=use.rows)
+  
+  return(r)
 }
 
 win=function(x,w){
