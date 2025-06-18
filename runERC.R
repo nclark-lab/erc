@@ -15,11 +15,7 @@ outputfile = "out.RDS"
 ## readTrees reads in your file of trees and constructs a master tree based on them
 comptrees=readTrees(treefile)
 
-comptrees=transformPaths(comptrees, transform = "sqrt",impute = F)
-
-compResid=getAllResiduals(comptrees, n.pcs = 0)
-
-rMat=getRMat(compResid, all = T, weights = comptrees$weights)
+rMat = getAllResiduals(comptrees, impute=F, n.pcs=0, all=T)
 
 clusterList=getClusterList(comptrees)
 
