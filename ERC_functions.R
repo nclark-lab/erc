@@ -362,7 +362,7 @@ transformData=function(x, transform=c("log", "asinh")){
   }
 }
 
-transformPaths=function(treesObj, transform="log", impute=T){
+transformPaths=function(treesObj, transform="sqrt", impute=T){
   transform=match.arg(transform, c("sqrt", "log", "none"))
   if(transform=="log"){
     set.seed(1);  iis=sample(nrow(treesObj$paths),500)
