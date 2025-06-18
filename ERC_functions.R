@@ -664,15 +664,14 @@ getRMat=function(resOut, all=F, weights=NULL, scale=F, use.rows=NULL){
 
 getAllResiduals=function(treesObj, transform="sqrt", impute=T,  # transformPaths arguments
                          #--------------------------------------------------------#
-                         doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F
                          nvMod=NULL, n.pcs=0, cutoff=NULL,      #
                          useSpecies=NULL,  min.sp=10,           #
                          min.valid=20, doOnly=NULL, maxT=NULL,  # getAllResiduals core function arguments
-                         block.do=F, weights=NULL,              #
+                         block.do=F, residweights=NULL,              #
                          do.loess=F, family="gaussian",         #
                          span=0.7, interaction=F,               #
                          #--------------------------------------------------------#
-                         all=F, weights=NULL, scale=F, use.rows=NULL)   # getRMat arguments
+                         all=F, rmatweights=NULL, scale=F, use.rows=NULL)   # getRMat arguments
 {  
   
   
@@ -680,10 +679,10 @@ getAllResiduals=function(treesObj, transform="sqrt", impute=T,  # transformPaths
   
   resids = coreGetResiduals(tree2, nvMod=nvMod, n.pcs=n.pcs, cutoff=cutoff,
                     useSpecies=useSpecies, min.sp=min.sp, min.valid=min.valid,
-                    doOnly=doOnly,maxT=maxT, block.do=block.do, weights=weights,
+                    doOnly=doOnly,maxT=maxT, block.do=block.do, weights=residweights,
                     do.loess=do.loess, family=family, span=0.7, interaction=interaction)
-  
-  r = getRMat(resids, all=all,weights=NULL, scale=F,use.rows=use.rows)
+  if(is.null(rmatweights)){rmatweights=tree2$weights}
+  r = getRMat(resids, all=all,rmatweights=rmatweights, scale=scale,use.rows=use.rows)
   
   return(r)
 }
