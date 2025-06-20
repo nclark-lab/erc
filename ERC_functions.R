@@ -558,9 +558,7 @@ coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=
   tPaths= treesObj$paths
   if(is.null(nvMod)){
     if(n.pcs>0){
-      # dimensionality reduction
       svdres=rsvd(treesObj$pathsImputed, k=n.pcs+1)
-
       if(!interaction){
         nvMod=model.matrix(~1+svdres$v[, 1:n.pcs])
       }
@@ -586,6 +584,10 @@ coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=
   if (is.null(useSpecies)){
     useSpecies=treesObj$masterTree$tip.label
     mappedEdges=treesObj$mappedEdges
+  }
+  else{
+    #useSpecies has to exist in masterTree
+    useSpecies=intersect(treesObj$masterTree$tip.label, useSpecies)
   }
   if(is.null(maxT)){
     maxT=treesObj$numTrees
