@@ -141,9 +141,10 @@ allPathsMasterRelative=function(tree, masterTree, masterTreePaths=NULL,i=NULL){
   vals
 }
 
-readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
-  
-  tmp=scan(file, sep="\t", what="character")
+readTrees=function(file, max.read=NA, masterTree=NULL, minTreesAll=20, reestimateBranches=F, minSpecs=NULL, useSpecies=NULL){
+  message("Using readTrees 2")
+  tmp=scan(file, sep="\t", what="character", quiet = T)
+  message(paste("Read ",length(tmp)/2, " items", collapse=""))
   trees=vector(mode = "list", length = min(length(tmp)/2,max.read, na.rm = T))
   keeptrees=rep(TRUE,length(trees))
   treenames=character()
@@ -155,19 +156,26 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
     }
     else{
       trees[[i/2]]=unroot(read.tree(text=tmp[i]))
-      if (i == 2){ allnames=intersect(trees[[i/2]]$tip.label,useSpecies) }
+      if (i == 2){  #initial setup
+        if(!is.null(useSpecies)){allnames=intersect(trees[[i/2]]$tip.label,useSpecies)
+        } else {allnames=trees[[i/2]]$tip.label}
+      }
       
+      #check useSpecies parameter
       if(!is.null(useSpecies)){
         if(length(intersect(trees[[i/2]]$tip.label,useSpecies)) < 3){
           keeptrees[[i/2]] = FALSE; next;
         }
         trees[[i/2]] = unroot(keep.tip(trees[[i/2]],intersect(trees[[i/2]]$tip.label,useSpecies)))
       }
+      
+      #check if it has more species
       if(length(trees[[i/2]]$tip.label)>maxsp){
         allnames = unique(c(allnames,trees[[i/2]]$tip.label))
         maxsp = length(allnames)
       }
     }
+    
   }
   trees = trees[keeptrees]
   treenames = treenames[keeptrees]
@@ -176,8 +184,8 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
   treesObj$trees=trees
   treesObj$numTrees=length(trees)
   treesObj$maxSp=maxsp
-  
-  message(paste("max is ", maxsp))
+  message("Done")
+  message(paste("Max number of species is ", maxsp))
   
   report=matrix(nrow=treesObj$numTrees, ncol=maxsp)
   colnames(report)=allnames
@@ -192,10 +200,10 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
   
   
   if(is.null(masterTree)){
-  
-  
+    
+    
     ii=which(rowSums(report)==maxsp)
-  
+    
     #Create a master tree with no edge lengths
     master=trees[[ii[1]]]
     master$edge.length[]=1
@@ -203,9 +211,11 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
   else{
     master=masterTree
   }
+  
+  
+  
   master=Preorder(master)
   treesObj$masterTree=master
-
   
   for ( i in 1:treesObj$numTrees){
     treesObj$trees[[i]]=RenumberTips(treesObj$trees[[i]], master$tip.label)
@@ -213,8 +223,7 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
     
   }
   
-  
-  ap=allPaths(master)
+  ap=allPathsTT(master)
   treesObj$ap=ap
   matAnc=(ap$matIndex>0)+1-1
   matAnc[is.na(matAnc)]=0
@@ -229,10 +238,10 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
                          clear = FALSE,    # If TRUE, clears the bar when finish
                          width = 100)      # Width of the progress bar
   
-  
+  message("Extracting paths")
   for( i in 1:treesObj$numTrees){
     pb$tick()
-    paths[i,]=allPathsMasterRelative(treesObj$trees[[i]], master, ap,i)
+    paths[i,]=allPathsMasterRelativeTT(treesObj$trees[[i]], master, ap,i)
   }
   
   
@@ -242,45 +251,164 @@ readTrees=function(file, max.read=NA, masterTree=NULL, useSpecies = NULL){
   treesObj$matIndex=ap$matIndex
   treesObj$lengths=unlist(lapply(treesObj$trees, function(x){sqrt(sum(x$edge.length^2))}))
   
-  ii=which(rowSums(report)==maxsp)
-  ##JL added this if statement 7/19/23 to fix a problem with calculating masterTree edges when a master tree is supplied
-  ##if(sum(treesObj$masterTree$edge.length) == nrow(treesObj$masterTree$edge)){
-  ##  if(length(ii)>20){
-  ##    message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
-  ##    tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
-  ##    allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
-  ##    allEdge=scaleMat(allEdge)
-  ##    allEdgeM=apply(allEdge,2,mean)
-  ##    treesObj$masterTree$edge.length=allEdgeM
-  ##  }
-  ##  else{
-  ##    message("Not enough genes with all species present: master tree has no edge.lengths")
-  ##  }
-  ##}
-  if(length(ii)>20){
-    message (paste0("estimating master tree branch lengths from ", length(ii), " genes"))
-    tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
-    allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
-    allEdge=scaleMat(allEdge)
-    allEdgeM=apply(allEdge,2,mean)
-    treesObj$masterTree$edge.length=allEdgeM
+  #require all species and tree compatibility
+  #ii=which(rowSums(report)==maxsp)
+  ii=intersect(which(rowSums(report)==maxsp),which(is.na(paths[,1])==FALSE))
+  
+  
+  
+  #if masterTree is provided by user, must use minSpecs<maxsp
+  #if no user supplied tree and not minSpec, calculate branch lengths from trees with all species
+  #if minSpecs<maxsp, calculate branch lengths from trees with minSpecs species
+  if(is.null(minSpecs)){
+    #if minimum species not specified,
+    #minimum is all species
+    minSpecs=maxsp
   }
-  else{
-    message("Not enough genes with all species present: master tree has no edge.lengths")
+  
+  if(!is.null(masterTree) && !reestimateBranches){
+    message("Using user-specified master tree")
   }
-
-  message("Naming paths")
-  for(i in ncol(treesObj$paths)){
-    tip=which(ap$matIndex==i, arr.ind = T)[,1]
-    if(tip<=maxsp){
-      colnames(treesObj$paths)=masterTree$tip.label[tip]
+  
+  
+  if(minSpecs==maxsp){ #if we're using all species
+    if (is.null(masterTree)) { #and if the user did not specify a master tree
+      if(length(ii)>=minTreesAll){
+        message (paste0("Estimating master tree branch lengths from ", length(ii), " genes"))
+        tmp=lapply( treesObj$trees[ii], function(x){x$edge.length})
+        
+        allEdge=matrix(unlist(tmp), ncol=2*maxsp-3, byrow = T)
+        allEdge=scaleMat(allEdge)
+        allEdgeM=apply(allEdge,2,mean)
+        treesObj$masterTree$edge.length=allEdgeM
+      }else {
+        message("Not enough genes with all species present: master tree has no edge.lengths")
+      }
+    }else{
+      message("Must specify minSpecs when supplying a master tree: master tree has no edge.lengths")
+    }
+  }else{ #if we are not using all species
+    #estimating from trees with minimum number of species
+    treeinds=which(rowSums(report)>=minSpecs) #which trees have the minimum species
+    message (paste0("estimating master tree branch lengths from ", length(treeinds), " genes"))
+    
+    
+    if(length(treeinds)>=minTreesAll){
+      pathstouse=treesObj$paths[treeinds,] #get paths for those trees
+      
+      colnames(pathstouse) = ap$destinNode
+      colBranch = vector("integer",0)
+      unq.colnames = unique(colnames(pathstouse))
+      
+      for (i in 1:length(unq.colnames)){
+        ind.cols = which(colnames(pathstouse) == unq.colnames[i])
+        colBranch = c(colBranch,ind.cols[1])
+      }
+      
+      allEdge = pathstouse[,colBranch]
+      allEdgeScaled = allEdge
+      for (i in 1:nrow(allEdgeScaled)){
+        allEdgeScaled[i,] = scaleDistNa(allEdgeScaled[i,])
+      }
+      colnames(allEdgeScaled) = unq.colnames
+      
+      edgelengths = vector("double", ncol(allEdgeScaled))
+      
+      edge.master = treesObj$masterTree$edge
+      
+      for (i in 1:nrow(edge.master)){
+        destinNode.i = edge.master[i,2]
+        col.Node.i = allEdgeScaled[,as.character(destinNode.i)]
+        edgelengths[i] = mean(na.omit(col.Node.i))
+      }
+      
+      treesObj$masterTree$edge.length = edgelengths
+    }else{
+      message("Not enough genes with minSpecs species present: master tree has no edge.lengths")
     }
   }
   
-  message("Done!")
+  
+  message("Naming columns of paths matrix")
+  colnames(treesObj$paths)=namePathsWSpeciesTT(treesObj)
+  
+  
   class(treesObj)=append(class(treesObj), "treesObj")
   treesObj
 }
+
+allPathsMasterRelativeTT =function (tree, masterTree, masterTreePaths=NULL,i=NULL){
+  
+  if(! is.list(masterTreePaths)){
+    masterTreePaths=allPathsTT(masterTree)
+  }
+  
+  treePaths=allPathsTT(tree, needIndex = F)
+  map=matchAllnodesTT(tree,masterTree)
+  
+  #remap the nodes
+  treePaths$nodeId[,1]=map[treePaths$nodeId[,1],2 ]
+  treePaths$nodeId[,2]=map[treePaths$nodeId[,2],2 ]
+  
+  
+  #ii=masterTreePaths$matIndex[(treePaths$nodeId[,2]-1)*nrow(masterTreePaths$matIndex)+treePaths$nodeId[,1]]
+  ii=masterTreePaths$matIndex[cbind(treePaths$nodeId[,1],treePaths$nodeId[,2])]
+  vals=double(length(masterTreePaths$dist))
+  
+  if(sum(is.na(ii))>0 & !is.null(i)) {
+    message("warning: discordant tree topology in tree ", i,", returning NA row",sep="")
+    return(vals)
+  }
+  
+  vals[]=NA
+  vals[ii]=treePaths$dist
+  vals
+}
+namePathsWSpeciesTT =function (treesObj){
+  cnames=vector("character", ncol(treesObj$paths))
+  
+  for(i in 1:ncol(treesObj$paths)){
+    tip=which(treesObj$matIndex==i, arr.ind = T)[,1]
+    #  show(tip)
+    if(tip<=treesObj$maxSp){
+      cnames[i]=treesObj$masterTree$tip.label[tip]
+    }
+  }
+  cnames
+}
+allPathsTT =function (tree, needIndex=T){
+  pres=PathLengths(tree)
+  
+  allD=pres[,3]
+  
+  nA=length(tree$tip.label)+tree$Nnode
+  if(needIndex){
+    matIndex=matrix(nrow=nA, ncol=nA)
+    for( j in 1:nrow(pres)){
+      matIndex[pres[j,2], pres[j,1]]=j
+    }
+    
+    
+    return(list(dist=allD, nodeId=pres[,c(2,1)], matIndex=matIndex))
+  }
+  else{
+    return(list(dist=allD, nodeId=pres[,c(2,1)]))
+  }
+}
+matchAllnodesTT =function (tree, masterTree){
+  index = KeptVerts(masterTree, TipLabels(masterTree) %in% tree$tip.label)
+  key = which(index)
+  map = cbind(seq_along(key), key)
+  map
+}
+edgeIndexRelativeMasterTT =function (tree, masterTree){
+  map=matchAllnodesTT(tree,masterTree)
+  newedge=tree$edge
+  newedge[,1]=map[newedge[,1],2]
+  newedge[,2]=map[newedge[,2],2]
+  newedge
+}
+
 
 scaleMat=function(mat){t(apply(mat,1,scaleDist))}
 scaleDist=function(x, na.rm=T){
@@ -407,7 +535,7 @@ getTrimmedAverage=function(x, trim=0.05){
   apply(x,2, mean, trim=trim, na.rm=T)
 }
 
-coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=NULL, maxT=NULL, block.do=F, weights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
+coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=NULL,  min.sp=10, min.valid=20,  doOnly=NULL, maxT=NULL, block.do=F, residweights=NULL, do.loess=F, family="gaussian", span=0.7, interaction=F){
   
   
   
@@ -464,8 +592,8 @@ coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=
   }
   
   
-  if(is.null(weights)){
-    weigths=treesObj$weights
+  if(is.null(residweights)){
+    residweights=treesObj$weights
   }
   
   
@@ -540,7 +668,7 @@ coreGetResiduals=function(treesObj, nvMod=NULL, n.pcs=0,cutoff=NULL, useSpecies=
       #extract the tPaths and corresponding weights
       
       allbranch=tPaths[iido,iiPaths,drop=F]
-      allbranchw=treesObj$weights[iido,iiPaths, drop=F]
+      allbranchw=residweights[iido,iiPaths, drop=F]
       iibad=which(tPaths[iido, iiPaths, drop=F]<cutoff)
       
       allbranch[iibad]=NA
@@ -631,15 +759,15 @@ myscale=function(x ){
   x
 }
 
-getRMat=function(resOut, all=F, weights=NULL, scale=F, use.rows=NULL){
+getRMat=function(resOut, all=F, rmatweights=NULL, scale=F, use.rows=NULL){
   
   allres=copyMat(resOut$allresiduals)
   if(is.null(use.rows)){
     use.rows=1:nrow(allres)
   }
   resIn=resOut$allresiduals
-  if(!is.null(weights)){
-    resIn=resIn*sqrt(weights)
+  if(!is.null(rmatweights)){
+    resIn=resIn*sqrt(rmatweights)
   }
   if(scale){
     resIn=myscale(resIn)
@@ -679,7 +807,7 @@ getAllResiduals=function(treesObj, transform="sqrt", impute=T,  # transformPaths
   
   resids = coreGetResiduals(tree2, nvMod=nvMod, n.pcs=n.pcs, cutoff=cutoff,
                     useSpecies=useSpecies, min.sp=min.sp, min.valid=min.valid,
-                    doOnly=doOnly,maxT=maxT, block.do=block.do, weights=residweights,
+                    doOnly=doOnly,maxT=maxT, block.do=block.do, residweights=residweights,
                     do.loess=do.loess, family=family, span=0.7, interaction=interaction)
   if(is.null(rmatweights)){rmatweights=tree2$weights}
   r = getRMat(resids, all=all,rmatweights=rmatweights, scale=scale,use.rows=use.rows)

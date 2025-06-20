@@ -16,9 +16,12 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 ### Output
 - treesObj object that contains all trees inputted, their branch lengths, and a master tree
 
+
+
 <br><br>
+
 ## transformPaths
-`transformPaths` applies a transformation to the paths of the trees, normalizing them. By default it is set to apply a logarithmic transformation but it can also be set to apply a square root transformation, or no transformation.
+`transformPaths` applies a transformation to the paths of the trees, normalizing them. By default it is set to apply a square root transformation but it can also be set to apply a log transformation, or no transformation.
 
 ### Input
 - <ins>**treesObj**</ins>: treesObj object to transform (output by `readTrees`)
@@ -26,9 +29,10 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 - **impute**: (`T`) whether or not to impute for missing data.
 ### Output
 - A treesObj object, modified as specified
+- In the wrapper, this output is passed to `coreGetResiduals`
 
 <br><br>
-## getAllResiduals
+## coreGetResiduals
 `getAllResiduals` takes a tree object and several optional parameters and returns the residuals of the tree branches.
 
 ### Input
@@ -42,7 +46,7 @@ On this page we will summarize the parameters, inputs, and outputs of the main f
 - **doOnly** (`NULL`): do only n trees
 - **maxT** (`NULL`): Maximum number of trees to use (will default to however many there are in treesObj)
 - **block<span>.d</span>o** (`F`): gets the unique patterns of species presence/absence from the report object
-- **weights** (`NULL`): Weights for the paths. If not provided it grabs them from treesObj
+- **residweights** (`NULL`): Weights for the paths. If not provided it grabs them from treesObj
 - **interaction**: (`F`): toggle for user interactivity: creates a data frame object
 
 Below inputs are currently unused, but have been left in the event of edge case necessities.
@@ -65,14 +69,20 @@ Below inputs are currently unused, but have been left in the event of edge case 
 ### Input
 - <ins>**resOut**</ins>: input of residual values: the output from `getAllResiduals`.
 - **all** (`F`): toggle for using all rows of residual input.
-- **weights** (`NULL`): weights for residuals
+- **rmatweights** (`NULL`): weights for residuals
 - **scale** (`F`): toggle to T to normalize the residuals (divide by the mean and divide by SD)
 - **use.rows** (`NULL`): list of which rows to use. Will default to using all of them.
 
 ### Output
 - residual matrix
 
-<br>
+<br><br>
+
+## getAllResiduals
+`getAllResiduals` is a wrapper function that runs **transformPaths**, **coreGetResiduals**, and **getRMat** (with all their parameters in order, and `getRMat`'s output). We don't use it in `runERC.R` because we need the transformed tree object as well, but this is an option if you do not need the intermediates.
+
+<br><br>
+
 
 ## getClusterList
 `getClusterList` takes a treesObj object and returns a list of gene clusters

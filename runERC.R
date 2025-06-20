@@ -13,11 +13,14 @@ outputfile = "out.RDS"
 
 
 ## readTrees reads in your file of trees and constructs a master tree based on them
-comptrees=readTrees(treefile)
+trees=readTrees(treefile)
 
-rMat = getAllResiduals(comptrees, impute=F, n.pcs=0, all=T)
 
-clusterList=getClusterList(comptrees)
+compTrees = transformPaths(trees, transform = "sqrt",impute = F)
+compResid = coreGetResiduals(compTrees, n.pcs=0)
+residuals = getRMat(compResid, all = T, rmatweights = compTrees$weights)
+
+clusterList=getClusterList(compTrees)
 
 
 
@@ -25,7 +28,7 @@ clusterList=getClusterList(comptrees)
 ##If you only want to run a few genes you can set doOnly = c("genea","geneb")
 ##If you want the plot of the RERs set plot = T (I would only recommend doing this for a few genes because it uses up a lot of space)
 
-corres=computeERC(rMat, comptrees, parallel = F, clusterListOutput = clusterList,  minSp = 15, saveFile = outputfile)
+corres=computeERC(residuals, compTrees, parallel = F, clusterListOutput = clusterList,  minSp = 15, saveFile = outputfile)
 
 
 # We strongly recommend you Fisher transform the data; this is what we usually operate on.

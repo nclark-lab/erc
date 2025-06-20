@@ -27,7 +27,7 @@ setwd("~/Documents/GitHub/erc")
 
 Once you set your directory, you can source the relevant packages and ERC files.
 
-```{r results='hide', message = FALSE, warning = FALSE, cache = TRUE}
+```{r results='hide', message = FALSE, warning = FALSE, cache = FALSE}
 require(devtools)
 remotes::install_github("ms609/TreeTools")
 source("ERC_functions.R")
@@ -47,25 +47,32 @@ outputfile = "out.RDS"
 
 ## Workflow
 
-Now that you've selected your file names, you can begin running the main functions. For a detailed description of what they do and their parameters, visit the [functions page](https://github.com/nclark-lab/erc/blob/main/functions.md). Here, your tree file is read in with `readTrees`, and the trees are transformed (via a square root transform) with `transformPaths`. 
+Now that you've selected your file names, you can begin running the main functions. For a detailed description of what they do and their parameters, visit the [functions page](https://github.com/nclark-lab/erc/blob/main/functions.md). First, your tree file is read in using `readTrees`. The trees are then transformed (via a square root transform) with `transformPaths`. 
 
 ```{r message = FALSE, warning = FALSE, cache = TRUE}
-comptrees = readTrees(treefile)
+trees=readTrees(treefile)
 
-comptrees = transformPaths(comptrees, transform = "sqrt",impute = F)
+compTrees = transformPaths(trees, transform = "sqrt",impute = F)
 ```
+
 Above is a plot of the tree paths before and after a square root transform.
 
-Next, with `getAllResiduals`, Relative Evolutionary Rates (RERs) are calculated, and then those rates are formatted into a matrix with `getRMat`
-```{r message = FALSE, warning = FALSE, cache = TRUE}
-compResid = getAllResiduals(comptrees, n.pcs = 0)
+Next, Relative Evolutionary Rates (RERs) are calculated by `coreGetResiduals`, and finally those rates are formatted into a matrix with `getRMat`. `getAllResiduals` (commented out below) has the same output as running these three together, but here we do not use it because we will later need the compTrees object.
 
-rMat = getRMat(compResid, all = T, weights = comptrees$weights)
+```{r message=FALSE, warning=FALSE, cache=TRUE}
+compResid = coreGetResiduals(compTrees, n.pcs=0)
+residuals = getRMat(compResid, all = T, rmatweights = compTrees$weights)
+
+# Wrapper function: (you still need to separately get compTrees
+#                    for the later clusterList function)
+# residuals = getAllResiduals(trees, impute=F, n.pcs=0, all=T)
 ```
+
+
 
 Finally, we get a list of gene clusters for the ERC function.
 ```{r message = FALSE, warning = FALSE, cache = TRUE}
-clusterList = getClusterList(comptrees)
+clusterList = getClusterList(compTrees)
 ```
 
 ## ERC function
@@ -75,7 +82,7 @@ Finally, you can compute the ERC values for your trees. You can tune many parame
 - If you only want to run a few genes you can set the parameter `doOnly = c("genea","geneb")`
 - If you want the plot of the RERs set `plot = T` (I would only recommend doing this for a few genes because it uses up a lot of space)
 ```{r}
-corres=computeERC(rMat, comptrees, clusterListOutput = clusterList,
+corres=computeERC(residuals, compTrees, clusterListOutput = clusterList,
                   minSp = 15, saveFile = outputfile)
 ```
 
