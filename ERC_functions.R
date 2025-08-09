@@ -6,6 +6,7 @@ library(rsvd)
 library(impute)
 library(pheatmap)
 library(Rcpp)
+library(TreeTools)
 #sourceCpp("cppFuncs.cpp")
 computeWeights=function(treesObj, plot=T){
   if(min(treesObj$paths, na.rm = T)<1e-6){
