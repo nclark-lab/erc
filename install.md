@@ -41,6 +41,7 @@ Here we provide instructions for installation on various systems.
    RcppArmadillo
    weights
    phangorn
+   treetools
    ```
 5. **Install impute**
 
