@@ -1,7 +1,4 @@
 require(devtools)
-#install TreeTools
-remotes::install_github("ms609/TreeTools")
-#this takes a few seconds and only needs to be done once per session
 source("ERC_functions.R")
 source("ERC.R")
 Rcpp::sourceCpp("cppFuncs.cpp")
