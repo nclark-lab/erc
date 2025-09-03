@@ -1,6 +1,13 @@
 
 # ERC (Evolutionary Rate Covariation)
-This software is for determining Evolutionary Rate Covariation (ERC) between pairs of genes, using R.
+This software is for determining Evolutionary Rate Covariation (ERC) between pairs of genes, using R. Details on ERC and its use can be found here:
+
+## Reading and Citations
+Little et al. [ERC 2.0 - evolutionary rate covariation update improves inference of functional interactions across large phylogenies](https://genome.cshlp.org/content/35/9/2041). 2025. Genome Research. 35: 2041-2051.
+
+Little et al. [Evolutionary rate covariation is a reliable predictor of co-functional interactions but not necessarily physical interactions](https://elifesciences.org/articles/93333). 2024. eLife. https://doi.org/10.7554/eLife.93333.3
+
+Clark et al. [Evolutionary rate covariation reveals shared functionality and coexpression of genes](https://genome.cshlp.org/content/22/4/714.short). 2012. 22: 714-720.
 
 ## Input:
 You will need a `.tre` file containing Newick format trees of the genes you want to examine. Part of the workflow is to create a master tree of all the species and their corresponding branch lengths. In light of this, optionally, you can provide a master tree, but if you do not have one the program will make one from the list of trees you provide in your `.tre` file.
